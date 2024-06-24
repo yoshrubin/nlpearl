@@ -1,1 +1,21 @@
-<p>opening-sentence works!</p>
+<div>
+    <textarea
+        [value]="sentence"
+        (input)="onSentenceChange($event)"
+        (blur)="onBlur()"
+    ></textarea>
+    <div>
+        <button type="button" (click)="insertPlaceholder('Agent Name')">
+            Agent Name
+        </button>
+        <button type="button" (click)="insertPlaceholder('Company Name')">
+            Company Name
+        </button>
+        <button type="button" (click)="insertPlaceholder('First Name')">
+            First Name
+        </button>
+        <button type="button" (click)="insertPlaceholder(Last Name')">
+            Last Name
+        </button>
+    </div>
+</div>

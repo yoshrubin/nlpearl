@@ -1,13 +1,19 @@
 <div class="container">
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-        <label for="name">Name:</label>
-        <input type="text" id="name" formControlName="name" />
+        <label for="name">
+            Name:
+            <input type="text" id="name" formControlName="name" />
+        </label>
 
-        <label for="phone">Phone:</label>
-        <input type="tel" id="phone" formControlName="phone" />
+        <label for="phone">
+            Phone:
+            <input type="tel" id="phone" formControlName="phone" />
+        </label>
 
-        <label for="sentence">Sentence:</label>
-        <app-opening-sentence [sentence]="sentence"></app-opening-sentence>
+        <label for="sentence">
+            Sentence:
+            <app-opening-sentence formControlName="sentence" />
+        </label>
 
         <button type="submit">Submit</button>
     </form>

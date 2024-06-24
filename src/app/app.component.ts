@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormBuilder, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { OpeningSentenceComponent } from "./opening-sentence/opening-sentence.component";
 
 @Component({
@@ -7,7 +7,7 @@ import { OpeningSentenceComponent } from "./opening-sentence/opening-sentence.co
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, OpeningSentenceComponent],
+  imports: [ReactiveFormsModule, OpeningSentenceComponent],
 })
 export class AppComponent {
   constructor(private fb: FormBuilder) {}
@@ -15,26 +15,14 @@ export class AppComponent {
   profileForm = this.fb.group({
     name: [""],
     phone: [""],
-    agentName: [""],
-    agentCompany: [""],
-    sentence: [""],
+    sentence: [
+      "Hi, this is [agent_name]. I’m calling from [company_name], do you have a few minutes to answer some questions?",
+    ],
   });
 
-  updateSentence() {
-    const { agentName, agentCompany } = this.profileForm.value;
-    this.profileForm
-      .get("sentence")
-      ?.setValue(
-        `Hi, this is ${agentName}, I’m calling from ${agentCompany}, do you have a few minutes to answer some questions?`,
-      );
-  }
+  updateSentence() {}
 
   onSubmit() {
-    const { agentName, agentCompany } = this.profileForm.value;
-    if (!agentName || !agentCompany) {
-      console.log("error");
-    } else {
-      console.table(this.profileForm.value);
-    }
+    console.table(this.profileForm.value);
   }
 }
