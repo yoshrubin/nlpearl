@@ -1,22 +1,25 @@
 <div class="container">
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-        <label for="name">
-            Name:
+    <section class="main">
+        <h1>Test Page</h1>
+        <form class="form" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <label for="name"> Name: </label>
             <input type="text" id="name" formControlName="name" />
-        </label>
 
-        <label for="phone">
-            Phone:
+            <label for="phone"> Phone: </label>
             <input type="tel" id="phone" formControlName="phone" />
-        </label>
 
-        <label for="sentence">
-            Sentence:
+            <label for="sentence"> Sentence: </label>
             <app-opening-sentence formControlName="sentence" />
-        </label>
 
-        <button type="submit">Submit</button>
-    </form>
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+    <aside class="cta">
+        <p>
+            Unlock the Power of Conversation with NLPearl and Transform Your
+            Business Interactions
+        </p>
+    </aside>
 </div>
 
 

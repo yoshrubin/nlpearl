@@ -1,10 +1,12 @@
-import { Component, forwardRef, Input } from "@angular/core";
+import { Component, forwardRef, Input, ViewEncapsulation } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 
 @Component({
   selector: "app-opening-sentence",
   templateUrl: "./opening-sentence.component.html",
   styleUrls: ["./opening-sentence.component.scss"],
+  encapsulation: ViewEncapsulation.None,
   standalone: true,
   providers: [
     {
@@ -15,12 +17,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
   ],
 })
 export class OpeningSentenceComponent implements ControlValueAccessor {
-  @Input() sentence: string = "";
+  @Input() sentence: SafeHtml;
 
   onChange: any = () => {};
   onTouched: any = () => {};
 
-  constructor() {}
+  constructor(private sanitizer: DomSanitizer) {
+    const initialSentence = `Hi, this is <span class="placeholder">Agent Name</span>. I’m calling from <span class="placeholder">Company Name</span>, do you have a few minutes to answer some questions?`;
+    this.sentence = this.sanitizer.bypassSecurityTrustHtml(initialSentence);
+  }
 
   writeValue(value: any): void {
     if (value !== undefined) {
@@ -39,7 +44,8 @@ export class OpeningSentenceComponent implements ControlValueAccessor {
   setDisabledState?(isDisabled: boolean): void {}
 
   onSentenceChange(event: any) {
-    this.sentence = event.target.value;
+    const target = event.target as HTMLTextAreaElement;
+    this.sentence = this.sanitizer.bypassSecurityTrustHtml(target.value);
     this.onChange(this.sentence);
   }
 
@@ -48,47 +54,42 @@ export class OpeningSentenceComponent implements ControlValueAccessor {
   }
 
   insertPlaceholder(placeholder: string) {
-    const textarea = document.querySelector("textarea");
-    if (textarea) {
-      const cursorPos = textarea.selectionStart;
-      const textBeforeCursor = this.sentence.substring(0, cursorPos);
-      const textAfterCursor = this.sentence.substring(cursorPos);
+    const editableDiv = document.querySelector("div[contenteditable='true']");
+    if (!editableDiv) return;
 
-      const placeholderRegex = /\[[^\]]+\]/g;
-      let match;
-      let lastMatchIndex = -1;
-      let lastMatchLength = 0;
-      while ((match = placeholderRegex.exec(textBeforeCursor)) !== null) {
-        lastMatchIndex = match.index;
-        lastMatchLength = match[0].length;
-      }
+    const content = editableDiv.innerHTML;
 
-      if (lastMatchIndex !== -1) {
-        const beforePlaceholder = this.sentence.substring(0, lastMatchIndex);
-        const afterPlaceholder = this.sentence.substring(
-          lastMatchIndex + lastMatchLength,
+    const placeholderRegex = /<span class="placeholder">[^<]+<\/span>/;
+    const match = content.match(placeholderRegex);
+
+    if (!match) return;
+
+    const matchIndex = match.index!;
+    const matchLength = match[0].length;
+
+    const beforePlaceholder = content.substring(0, matchIndex);
+    const afterPlaceholder = content.substring(matchIndex + matchLength);
+
+    const newContent = beforePlaceholder + placeholder + afterPlaceholder;
+    editableDiv.innerHTML = newContent;
+
+    this.sentence = newContent;
+    this.onChange(this.sentence);
+
+    setTimeout(() => {
+      const newRange = document.createRange();
+      const newSelection = window.getSelection();
+      if (!newSelection) return;
+
+      if (editableDiv.firstChild) {
+        newRange.setStart(
+          editableDiv.firstChild,
+          matchIndex + placeholder.length,
         );
-        this.sentence = beforePlaceholder + placeholder + afterPlaceholder;
-        this.onChange(this.sentence); // Notify Angular forms that the value has changed
-
-        // Update cursor position to be after the newly inserted placeholder
-        setTimeout(() => {
-          textarea.selectionStart = textarea.selectionEnd =
-            lastMatchIndex + placeholder.length;
-          textarea.focus();
-        }, 0);
-      } else {
-        // If no placeholder is found, insert at the cursor position
-        this.sentence = textBeforeCursor + placeholder + textAfterCursor;
-        this.onChange(this.sentence); // Notify Angular forms that the value has changed
-
-        // Update cursor position to be after the newly inserted placeholder
-        setTimeout(() => {
-          textarea.selectionStart = textarea.selectionEnd =
-            cursorPos + placeholder.length;
-          textarea.focus();
-        }, 0);
+        newRange.collapse(true);
+        newSelection.removeAllRanges();
+        newSelection.addRange(newRange);
       }
-    }
+    }, 0);
   }
 }

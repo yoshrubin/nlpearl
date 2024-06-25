@@ -16,7 +16,7 @@ export class AppComponent {
     name: [""],
     phone: [""],
     sentence: [
-      "Hi, this is [agent_name]. I’m calling from [company_name], do you have a few minutes to answer some questions?",
+      `Hi, this is <span class="placeholder">Agent Name</span>. I’m calling from <span class="placeholder">Company Name</span>, do you have a few minutes to answer some questions?`,
     ],
   });
 
