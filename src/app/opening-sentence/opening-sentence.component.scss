@@ -1,0 +1,39 @@
+.editable-container {
+    border-radius: 12px;
+    border: 1px solid #dcdbdd;
+
+    .placeholder {
+        color: #ffffff;
+        background-color: #5a55f4;
+        border-radius: 3px;
+        padding: 2px 3px;
+    }
+
+    .editable {
+        color: #83818a;
+        font-size: 10px;
+        padding: 16px;
+    }
+
+    hr {
+        border-top: 1px solid #dcdbdd;
+    }
+
+    .buttons {
+        display: flex;
+        align-items: center;
+        padding-bottom: 8px;
+        padding-left: 18px;
+        :not(:first-child) {
+            margin-left: 5px;
+        }
+        button {
+            color: #c5cee0;
+            border: 0.5px solid #edf2f6;
+            background-color: #ffffff;
+            font-size: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    }
+}
